@@ -7,73 +7,67 @@
   <style>
     body {
       margin: 0;
-      background: linear-gradient(135deg, #000000, #1a1a1a);
-      background-size: 400% 400%;
-      animation: backgroundShift 15s ease infinite;
+      background: linear-gradient(270deg, #000000, #000428, #004e92);
+      background-size: 600% 600%;
+      animation: gradientBG 12s ease infinite;
       font-family: Arial, sans-serif;
       color: white;
     }
 
-    @keyframes backgroundShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0% 50% }
     }
 
     .title {
-      text-align: center;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 28px;
-      margin: 20px auto 0;
       font-weight: bold;
+      text-align: center;
       color: #00bfff;
-      text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+      text-shadow: 0 0 10px #000, 0 0 20px #00bfff;
+      z-index: 999999;
     }
 
     #us-tech-bot {
       position: fixed;
-      top: 100px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 40px;
+      right: 20px;
       width: 250px;
       background: #000428;
+      color: white;
       border: 2px solid #00ffff;
       border-radius: 10px;
       padding: 15px;
-      box-shadow: 0 0 15px #00ffff;
-      z-index: 1000;
+      box-shadow: 0 0 12px #00ffff;
+      font-size: 12px;
+      z-index: 999998;
     }
 
     #us-tech-bot h2 {
-      font-size: 16px;
-      color: #00ffff;
+      font-size: 14px;
       text-align: center;
-      margin-bottom: 10px;
-    }
-
-    #us-tech-bot label {
-      font-size: 12px;
-      display: block;
-      margin-top: 10px;
+      color: #00ffff;
+      margin-bottom: 8px;
     }
 
     #us-tech-bot select, #us-tech-bot button {
       width: 100%;
       padding: 6px;
-      margin-top: 5px;
-      font-size: 12px;
-      background: #ff3c3c;
+      margin-top: 6px;
+      border-radius: 5px;
       border: none;
-      border-radius: 4px;
+      background-color: #ff3c3c;
       color: white;
-    }
-
-    #us-tech-bot button:disabled {
-      background: #444;
-      cursor: not-allowed;
+      font-size: 12px;
     }
 
     #signal-output {
-      margin-top: 15px;
+      margin-top: 10px;
       text-align: center;
       font-weight: bold;
       font-size: 14px;
@@ -81,62 +75,48 @@
 
     #welcome-modal {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      z-index: 9999;
+      align-items: center;
+      z-index: 1000000;
     }
 
-    #welcome-box {
-      background: #111;
-      border: 2px solid #00ffff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px #00ffff;
-      max-width: 300px;
-      text-align: center;
-    }
-
-    #welcome-box h3 {
+    #welcome-modal h1 {
+      font-size: 24px;
       color: #00ffff;
-      margin-bottom: 10px;
-    }
-
-    #welcome-box p {
-      font-size: 14px;
       margin-bottom: 15px;
     }
 
-    #ok-btn {
-      padding: 6px 12px;
-      background-color: #ff3c3c;
-      color: white;
-      border: none;
-      border-radius: 4px;
+    #welcome-modal p {
+      font-size: 14px;
+      max-width: 80%;
+      text-align: center;
+      margin-bottom: 20px;
     }
+
+    #welcome-modal button {
+      padding: 10px 20px;
+      font-size: 14px;
+      background-color: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
   <div class="title">MohsinProBot Version 2.0</div>
 
-  <!-- Welcome Modal -->
-  <div id="welcome-modal">
-    <div id="welcome-box">
-      <h3>Welcome To MohsinProBot</h3>
-      <p>This bot auto-analyzes and gives Buy/Sell signals on <b>market-qx.pro</b><br><b>50~60% Accuracy</b></p>
-      <button id="ok-btn">OK</button>
-    </div>
-  </div>
-
-  <!-- Sound -->
-  <audio id="ding-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-clear-announce-tones-2861.mp3"></audio>
-
-  <!-- Bot Panel -->
   <div id="us-tech-bot">
-    <h2>MohsinProBot</h2>
+    <h2>MohsinProBot Panel</h2>
     <label>Time Frame</label>
     <select id="time-frame">
       <option>5 sec</option>
@@ -147,71 +127,70 @@
 
     <label>Coin</label>
     <select id="coin-pair">
+      <option>EUR/USD</option>
+      <option>USD/JPY</option>
+      <option>GBP/USD</option>
+      <option>USD/PKR</option>
       <option>USD/BDT</option>
       <option>USD/ARS</option>
       <option>USD/BRL</option>
-      <option>USD/PKR</option>
-      <option>USD/INR</option>
-      <option>EUR/USD</option>
-      <option>GBP/USD</option>
-      <option>USD/JPY</option>
-      <option>AUD/USD</option>
-      <option>BTC/USD</option>
-      <option>ETH/USD</option>
     </select>
 
     <button id="analyze-button">Analyze</button>
-    <div id="signal-output">Signal: --<br>Next In: --s</div>
+    <div id="signal-output">
+      Signal: --<br>Next in: --s
+    </div>
   </div>
 
+  <div id="welcome-modal">
+    <h1>Welcome To MohsinProBot</h1>
+    <p>This bot auto-analyzes and gives Buy/Sell signals using real market data from <b>market-qx.pro</b><br>Accuracy: 50~60%</p>
+    <button onclick="closeModal()">OK</button>
+  </div>
+
+  <audio id="ding-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-clear-announce-tones-2861.mp3" preload="auto"></audio>
+
   <script>
+    const API_KEY = "d70f90f05e854c988a1943fe6b01cc07";
     const analyzeBtn = document.getElementById("analyze-button");
     const signalOutput = document.getElementById("signal-output");
     const sound = document.getElementById("ding-sound");
 
-    const apiKey = "d70f90f05e854c988a1943fe6b01cc07";
-    let cooldownActive = false;
-
-    document.getElementById("ok-btn").onclick = function () {
-      document.getElementById("welcome-modal").style.display = "none";
+    const symbolMap = {
+      "EUR/USD": "EUR/USD",
+      "USD/JPY": "USD/JPY",
+      "GBP/USD": "GBP/USD",
+      "USD/PKR": "USD/PKR",
+      "USD/BDT": "USD/BDT",
+      "USD/ARS": "USD/ARS",
+      "USD/BRL": "USD/BRL"
     };
 
-    async function fetchSignal(symbol) {
-      try {
-        const res = await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=1min&apikey=${apiKey}`);
-        const data = await res.json();
-        if (data && data.values && data.values.length >= 2) {
-          const latest = parseFloat(data.values[0].close);
-          const previous = parseFloat(data.values[1].close);
-          return latest > previous ? "Buy" : "Sell";
-        }
-      } catch (e) {
-        console.error("API error:", e);
-      }
-      return Math.random() > 0.5 ? "Buy" : "Sell"; // fallback
-    }
-
-    function mapSymbol(pair) {
-      return pair.replace("/", "/").replace(" ", "").toUpperCase();
+    function closeModal() {
+      document.getElementById("welcome-modal").style.display = "none";
     }
 
     analyzeBtn.addEventListener("click", async () => {
-      if (cooldownActive) return;
-
       const tf = document.getElementById("time-frame").value;
       const coin = document.getElementById("coin-pair").value;
-      const symbol = mapSymbol(coin);
+      const symbol = symbolMap[coin];
 
-      const signal = await fetchSignal(symbol);
-      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
-      sound.play();
+      if (!symbol) {
+        signalOutput.innerHTML = "Invalid pair selected.";
+        return;
+      }
 
+      sound.currentTime = 0;
+      sound.play().catch(e => console.warn("Sound error:", e));
+
+      let signal = await fetchSignal(symbol);
       let countdown = 20;
-      cooldownActive = true;
 
+      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
       signalOutput.style.color = color;
+
       signalOutput.innerHTML = `
-        ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
+        ${coin} (${tf})<br><b>${signal}</b><br>Next in: ${countdown}s
       `;
       analyzeBtn.disabled = true;
 
@@ -219,17 +198,34 @@
         countdown--;
         if (countdown <= 0) {
           clearInterval(interval);
-          signalOutput.style.color = "#ffffff";
-          signalOutput.innerHTML = `Signal: --<br>Next In: Ready`;
+          signalOutput.innerHTML = `Signal: --<br>Next in: Ready`;
           analyzeBtn.disabled = false;
-          cooldownActive = false;
         } else {
           signalOutput.innerHTML = `
-            ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
+            ${coin} (${tf})<br><b>${signal}</b><br>Next in: ${countdown}s
           `;
         }
       }, 1000);
     });
+
+    async function fetchSignal(symbol) {
+      try {
+        const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(symbol)}&apikey=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data || !data.close || !data.open) {
+          return "Hold";
+        }
+
+        const change = parseFloat(data.close) - parseFloat(data.open);
+        return change > 0 ? "Buy" : "Sell";
+
+      } catch (error) {
+        console.error("API error:", error);
+        return "Hold";
+      }
+    }
   </script>
 </body>
 </html>
