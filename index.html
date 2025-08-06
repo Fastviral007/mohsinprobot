@@ -5,79 +5,82 @@
   <title>MohsinProBot Version 2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Background animation */
     body {
       margin: 0;
-      padding: 0;
-      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0f0f0f);
-      background-size: 400% 400%;
-      animation: gradient 10s ease infinite;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
       color: white;
+      font-family: Arial, sans-serif;
     }
-
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .main-title {
-      position: absolute;
-      top: 20px;
-      width: 100%;
+    #welcome-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999999;
+      flex-direction: column;
       text-align: center;
-      font-size: 28px;
-      font-weight: bold;
+      padding: 20px;
+    }
+    #welcome-popup h1 {
+      font-size: 24px;
       color: #00bfff;
-      text-shadow: 0 0 10px #00bfff;
-      z-index: 9999;
+    }
+    #welcome-popup p {
+      font-size: 14px;
+      margin: 10px 0;
+    }
+    #welcome-popup button {
+      padding: 8px 16px;
+      border: none;
+      background: #00bfff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
     #us-tech-bot {
-      background: #000428;
-      color: white;
-      border: 2px solid #00ffff;
-      border-radius: 12px;
-      padding: 20px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 260px;
-      box-shadow: 0 0 20px #00ffff;
-      font-size: 13px;
-      z-index: 1000;
+      background: #000000cc;
+      border: 2px solid #00ffff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 20px #00ffffaa;
+      font-size: 12px;
+      z-index: 999;
+      text-align: center;
     }
 
     #us-tech-bot h2 {
-      color: #00ffff;
+      color: #00bfff;
       font-size: 16px;
-      margin-bottom: 12px;
-      text-align: center;
+      margin-bottom: 10px;
     }
 
     #us-tech-bot label {
       display: block;
-      margin-top: 10px;
+      margin-top: 8px;
       font-size: 12px;
     }
 
-    #us-tech-bot select,
-    #us-tech-bot button {
+    #us-tech-bot select, #us-tech-bot button {
       width: 100%;
       padding: 6px;
-      margin-top: 6px;
+      margin-top: 5px;
       font-size: 12px;
       border: none;
       border-radius: 4px;
       background: #ff3c3c;
       color: white;
-      transition: 0.3s;
-    }
-
-    #us-tech-bot button:hover {
-      background: #ff6666;
     }
 
     #us-tech-bot button:disabled {
@@ -86,111 +89,52 @@
     }
 
     #signal-output {
-      margin-top: 14px;
-      font-size: 14px;
+      margin-top: 12px;
+      font-size: 13px;
       font-weight: bold;
       text-align: center;
-    }
-
-    /* Welcome modal */
-    #welcome-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    #welcome-content {
-      background: #111;
-      padding: 30px;
-      border-radius: 10px;
-      border: 2px solid #00ffff;
-      text-align: center;
-      width: 80%;
-      max-width: 400px;
-      box-shadow: 0 0 20px #00ffff;
-    }
-
-    #welcome-content h2 {
-      margin-bottom: 15px;
-      color: #00ffff;
-    }
-
-    #welcome-content p {
-      margin-bottom: 20px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    #welcome-content button {
-      padding: 10px 20px;
-      background-color: #ff3c3c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    #welcome-content button:hover {
-      background-color: #ff6666;
     }
   </style>
 </head>
 <body>
 
-  <div class="main-title">MohsinProBot Version 2.0</div>
-
-  <div id="us-tech-bot">
-    <h2>MohsinProBot Version 2.0</h2>
-    <label>Time Frame</label>
-    <select id="time-frame">
-      <option>5 sec</option>
-      <option>15 sec</option>
-      <option>30 sec</option>
-      <option>1 min</option>
-    </select>
-    <label>Coin</label>
-    <select id="coin-pair">
-      <option>AUD/NZD</option>
-      <option>USD/PKR</option>
-      <option>USD/INR</option>
-      <option>USD/EGP (OTC)</option>
-      <option>EUR/USD</option>
-      <option>GBP/USD</option>
-      <option>USD/JPY</option>
-      <option>AUD/USD</option>
-      <option>BTC/USD</option>
-      <option>ETH/USD</option>
-    </select>
-    <button id="analyze-button">Analyze</button>
-    <div id="signal-output">
-      Signal: --<br>
-      Next In: --s
-    </div>
-  </div>
-
-  <!-- Welcome Modal -->
-  <div id="welcome-modal" style="display: none;">
-    <div id="welcome-content">
-      <h2>Welcome to MohsinProBot</h2>
-      <p>
-        This bot auto analyzes and gives Buy/Sell signals<br>
-        on <b>market-qx.pro</b><br>
-        <b>50~60% Accuracy</b>
-      </p>
-      <button onclick="closeWelcome()">OK</button>
-    </div>
+  <div id="welcome-popup">
+    <h1>Welcome to MohsinProBot Version 2.0</h1>
+    <p>This bot auto analyzes and gives Buy/Sell signals on <b>market-qx.pro</b>.</p>
+    <p><b>Accuracy:</b> 50–60%</p>
+    <button onclick="closeWelcome()">OK</button>
   </div>
 
   <script>
+    function closeWelcome() {
+      document.getElementById("welcome-popup").style.display = "none";
+    }
+  </script>
+
+  <script>
     let cooldownActive = false;
+
+    const coins = [
+      "AUD/NZD", "USD/PKR", "USD/INR", "USD/EGP (OTC)", "EUR/USD",
+      "GBP/USD", "USD/JPY", "AUD/USD", "BTC/USD", "ETH/USD"
+    ];
+    const timeFrames = ["5 sec", "15 sec", "30 sec", "1 min"];
+
+    const panel = document.createElement("div");
+    panel.id = "us-tech-bot";
+    panel.innerHTML = `
+      <h2>MohsinProBot Version 2.0</h2>
+      <label>Time Frame</label>
+      <select id="time-frame">${timeFrames.map(t => `<option>${t}</option>`).join('')}</select>
+      <label>Coin</label>
+      <select id="coin-pair">${coins.map(c => `<option>${c}</option>`).join('')}</select>
+      <button id="analyze-button">Analyze</button>
+      <div id="signal-output">
+        Signal: --<br>
+        Next In: --s
+      </div>
+    `;
+    document.body.appendChild(panel);
 
     const analyzeBtn = document.getElementById("analyze-button");
     const signalOutput = document.getElementById("signal-output");
@@ -205,7 +149,9 @@
       cooldownActive = true;
 
       signalOutput.style.color = color;
-      signalOutput.innerHTML = `${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s`;
+      signalOutput.innerHTML = `
+        ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
+      `;
       analyzeBtn.disabled = true;
 
       const interval = setInterval(() => {
@@ -217,7 +163,9 @@
           analyzeBtn.disabled = false;
           cooldownActive = false;
         } else {
-          signalOutput.innerHTML = `${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s`;
+          signalOutput.innerHTML = `
+            ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
+          `;
         }
       }, 1000);
     }
@@ -225,19 +173,6 @@
     analyzeBtn.addEventListener("click", () => {
       if (!cooldownActive) generateSignal();
     });
-
-    // Welcome modal control
-    window.onload = () => {
-      if (!localStorage.getItem("welcomeShown")) {
-        document.getElementById("welcome-modal").style.display = "flex";
-      }
-    }
-
-    function closeWelcome() {
-      document.getElementById("welcome-modal").style.display = "none";
-      localStorage.setItem("welcomeShown", "true");
-    }
   </script>
-
 </body>
 </html>
