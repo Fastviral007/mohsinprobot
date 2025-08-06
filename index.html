@@ -15,12 +15,35 @@
       animation: gradientBG 15s ease infinite;
       color: white;
       overflow: hidden;
+      position: relative;
     }
 
     @keyframes gradientBG {
       0% {background-position: 0% 50%;}
       50% {background-position: 100% 50%;}
       100% {background-position: 0% 50%;}
+    }
+
+    /* BIG BACKGROUND TITLE */
+    .background-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: bold;
+      color: rgba(0, 170, 255, 0.1);
+      text-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
+      white-space: nowrap;
+      animation: glowPulse 3s infinite ease-in-out;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes glowPulse {
+      0% { text-shadow: 0 0 10px #00aaff55; }
+      50% { text-shadow: 0 0 30px #00aaff99; }
+      100% { text-shadow: 0 0 10px #00aaff55; }
     }
 
     #us-tech-bot {
@@ -121,14 +144,17 @@
 </head>
 <body>
 
-  <!-- Welcome Chart -->
+  <!-- 🔵 BIG BACKGROUND NAME -->
+  <div class="background-title">MohsinProBot</div>
+
+  <!-- 🔵 WELCOME POPUP -->
   <div id="welcome-popup">
     <h1>Welcome to MohsinProBot Version 2.0</h1>
     <p>This bot auto analyzes and gives Buy/Sell signals on market-qx.pro<br><b>50~60% 𝗔𝗰𝗰𝘂𝗿𝗮𝗰𝘆</b></p>
     <button onclick="closeWelcome()">OK</button>
   </div>
 
-  <!-- Bot Panel -->
+  <!-- 🔵 BOT PANEL -->
   <div id="us-tech-bot">
     <h2>MohsinProBot<br>Version 2.0</h2>
     <label for="time-frame">Time Frame</label>
