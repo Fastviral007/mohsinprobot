@@ -24,17 +24,16 @@
       100% {background-position: 0% 50%;}
     }
 
-    /* BIG BACKGROUND TITLE */
-    .background-title {
+    /* BIG NAME on top center */
+    .top-center-title {
       position: absolute;
-      top: 50%;
+      top: 20px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 48px;
+      transform: translateX(-50%);
+      font-size: 32px;
       font-weight: bold;
-      color: rgba(0, 170, 255, 0.1);
+      color: #00aaff;
       text-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
-      white-space: nowrap;
       animation: glowPulse 3s infinite ease-in-out;
       z-index: 1;
       pointer-events: none;
@@ -144,8 +143,8 @@
 </head>
 <body>
 
-  <!-- 🔵 BIG BACKGROUND NAME -->
-  <div class="background-title">MohsinProBot</div>
+  <!-- 🔵 TOP CENTER NAME (Visible to all) -->
+  <div class="top-center-title">MohsinProBot Version 2.0</div>
 
   <!-- 🔵 WELCOME POPUP -->
   <div id="welcome-popup">
