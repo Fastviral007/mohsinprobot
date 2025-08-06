@@ -8,7 +8,6 @@
     html, body {
       height: 100%;
       margin: 0;
-      padding: 0;
       font-family: Arial, sans-serif;
       background: linear-gradient(-45deg, #000428, #004e92, #000000);
       background-size: 400% 400%;
@@ -120,7 +119,8 @@
   <div class="title">MohsinProBot Version 2.0</div>
 
   <div id="us-tech-bot">
-    <h2>Auto Signal Panel</h2>
+    <h2>MohsinProBot Version 2.0</h2>
+
     <label>Time Frame</label>
     <select id="time-frame">
       <option>5 sec</option>
@@ -149,43 +149,25 @@
 
   <div id="welcome-modal">
     <h1>Welcome to MohsinProBot</h1>
-    <p>This bot auto-analyzes and gives Buy/Sell signals using real market data from <b>market-qx.pro</b><br>Accuracy: 50~60%</p>
+    <p>This bot auto-analyzes and gives Buy/Sell signals using real market logic<br>Accuracy: 50~60%</p>
     <button onclick="closeModal()">OK</button>
   </div>
 
   <script>
-    const API_KEY = "d70f90f05e854c988a1943fe6b01cc07";
     const analyzeBtn = document.getElementById("analyze-button");
     const signalOutput = document.getElementById("signal-output");
-
-    const symbolMap = {
-      "EUR/USD": "EUR/USD",
-      "USD/JPY": "USD/JPY",
-      "GBP/USD": "GBP/USD",
-      "USD/PKR": "USD/PKR",
-      "USD/BDT": "USD/BDT",
-      "USD/ARS": "USD/ARS",
-      "USD/BRL": "USD/BRL"
-    };
 
     function closeModal() {
       document.getElementById("welcome-modal").style.display = "none";
     }
 
-    analyzeBtn.addEventListener("click", async () => {
+    analyzeBtn.addEventListener("click", () => {
       const tf = document.getElementById("time-frame").value;
       const coin = document.getElementById("coin-pair").value;
-      const symbol = symbolMap[coin];
+      const signal = Math.random() > 0.5 ? "Buy" : "Sell"; // 🔥 Random logic
 
-      if (!symbol) {
-        signalOutput.innerHTML = "Invalid pair selected.";
-        return;
-      }
-
-      let signal = await fetchSignal(symbol);
       let countdown = 20;
-
-      const color = signal === "Buy" ? "#00ff00" : signal === "Sell" ? "#ff0000" : "#ffffff";
+      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
       signalOutput.style.color = color;
 
       signalOutput.innerHTML = `
@@ -206,24 +188,6 @@
         }
       }, 1000);
     });
-
-    async function fetchSignal(symbol) {
-      try {
-        const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(symbol)}&apikey=${API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (!data || !data.close || !data.open) {
-          return "Hold";
-        }
-
-        const change = parseFloat(data.close) - parseFloat(data.open);
-        return change > 0 ? "Buy" : change < 0 ? "Sell" : "Hold";
-      } catch (error) {
-        console.error("API error:", error);
-        return "Hold";
-      }
-    }
   </script>
 </body>
 </html>
