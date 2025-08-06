@@ -1,87 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>MohsinProBot Version 2.0</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    html, body {
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1f4037);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      background: linear-gradient(135deg, #000428, #004e92);
+      background-size: cover;
       color: white;
-      overflow: hidden;
-      position: relative;
+      font-family: Arial, sans-serif;
     }
 
-    @keyframes gradientBG {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
-
-    /* BIG NAME on top center */
-    .top-center-title {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+    #mohsinprobot-title {
+      text-align: center;
       font-size: 32px;
+      color: #00ffff;
       font-weight: bold;
-      color: #00aaff;
-      text-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
-      animation: glowPulse 3s infinite ease-in-out;
-      z-index: 1;
-      pointer-events: none;
+      margin: 20px 0;
+      animation: glow 2s infinite alternate;
     }
 
-    @keyframes glowPulse {
-      0% { text-shadow: 0 0 10px #00aaff55; }
-      50% { text-shadow: 0 0 30px #00aaff99; }
-      100% { text-shadow: 0 0 10px #00aaff55; }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+      }
+      to {
+        text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff;
+      }
     }
 
     #us-tech-bot {
       position: fixed;
-      top: 50%;
+      top: 120px;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       width: 240px;
       background: #000428;
-      color: white;
       border: 2px solid #00ffff;
       border-radius: 10px;
-      padding: 15px;
+      padding: 10px;
+      box-shadow: 0 0 15px #00ffff;
       z-index: 999;
-      box-shadow: 0 0 12px #00ffff;
-      font-size: 12px;
-      text-align: center;
     }
 
     #us-tech-bot h2 {
-      color: #00aaff;
-      font-size: 16px;
+      text-align: center;
+      color: #00ffff;
       margin-bottom: 10px;
+      font-size: 14px;
     }
 
     #us-tech-bot label {
-      display: block;
-      margin-top: 6px;
       font-size: 12px;
-      text-align: left;
+      margin-top: 10px;
     }
 
     #us-tech-bot select, #us-tech-bot button {
       width: 100%;
-      padding: 6px;
-      margin-top: 4px;
+      margin-top: 5px;
+      padding: 5px;
       font-size: 12px;
+      border-radius: 5px;
       border: none;
-      border-radius: 4px;
       background: #ff3c3c;
       color: white;
     }
@@ -92,137 +75,125 @@
     }
 
     #signal-output {
-      margin-top: 10px;
-      font-size: 13px;
+      text-align: center;
+      margin-top: 15px;
       font-weight: bold;
     }
 
-    #welcome-popup {
+    /* Welcome chart */
+    #welcome-chart {
       position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
       background: rgba(0, 0, 0, 0.9);
-      color: white;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+      border: 2px solid #00ffff;
+      border-radius: 12px;
       padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 20px #00ffff;
+      z-index: 10000;
     }
 
-    #welcome-popup h1 {
-      font-size: 24px;
+    #welcome-chart h3 {
+      color: #00ffff;
       margin-bottom: 15px;
-      color: #00aaff;
     }
 
-    #welcome-popup p {
-      font-size: 15px;
-      margin-bottom: 20px;
-      max-width: 300px;
-    }
-
-    #welcome-popup button {
-      padding: 10px 20px;
-      font-size: 14px;
+    #welcome-chart button {
+      background: #00ffff;
+      color: #000;
+      padding: 8px 15px;
       border: none;
-      border-radius: 5px;
-      background-color: #00aaff;
-      color: white;
+      border-radius: 6px;
+      margin-top: 15px;
       cursor: pointer;
-    }
-
-    #welcome-popup button:hover {
-      background-color: #008ecc;
     }
   </style>
 </head>
 <body>
+  <div id="mohsinprobot-title">MohsinProBot Version 2.0</div>
 
-  <!-- 🔵 TOP CENTER NAME (Visible to all) -->
-  <div class="top-center-title">MohsinProBot Version 2.0</div>
-
-  <!-- 🔵 WELCOME POPUP -->
-  <div id="welcome-popup">
-    <h1>Welcome to MohsinProBot Version 2.0</h1>
-    <p>This bot auto analyzes and gives Buy/Sell signals on market-qx.pro<br><b>50~60% 𝗔𝗰𝗰𝘂𝗿𝗮𝗰𝘆</b></p>
-    <button onclick="closeWelcome()">OK</button>
+  <!-- Welcome Chart -->
+  <div id="welcome-chart">
+    <h3>Welcome To MohsinProBot</h3>
+    <p>This bot auto analyzes and gives Buy/Sell signals on <strong>market-qx.pro</strong><br>
+    Accuracy: ~50-60%</p>
+    <button onclick="hideWelcome()">OK</button>
   </div>
 
-  <!-- 🔵 BOT PANEL -->
+  <!-- Bot Panel -->
   <div id="us-tech-bot">
-    <h2>MohsinProBot<br>Version 2.0</h2>
-    <label for="time-frame">Time Frame</label>
+    <h2>MohsinProBot v2.0</h2>
+    <label>Time Frame</label>
     <select id="time-frame">
-      <option>5 sec</option>
-      <option>15 sec</option>
-      <option>30 sec</option>
-      <option>1 min</option>
+      <option>1min</option>
+      <option>5min</option>
     </select>
-    <label for="coin-pair">Coin</label>
+    <label>Coin</label>
     <select id="coin-pair">
-      <option>AUD/NZD</option>
-      <option>USD/PKR</option>
-      <option>USD/INR</option>
-      <option>USD/EGP (OTC)</option>
-      <option>EUR/USD</option>
-      <option>GBP/USD</option>
-      <option>USD/JPY</option>
-      <option>AUD/USD</option>
-      <option>BTC/USD</option>
-      <option>ETH/USD</option>
+      <option value="BTC/USD">BTC/USD</option>
+      <option value="ETH/USD">ETH/USD</option>
+      <option value="EUR/USD">EUR/USD</option>
     </select>
     <button id="analyze-button">Analyze</button>
-    <div id="signal-output">Signal: --<br>Next In: --s</div>
+    <div id="signal-output">Signal: --<br>Next in: --s</div>
   </div>
 
   <script>
-    function closeWelcome() {
-      document.getElementById("welcome-popup").style.display = "none";
-    }
-
-    let cooldownActive = false;
-
+    const API_KEY = "d70f90f05e854c988a1943fe6b01cc07";
     const analyzeBtn = document.getElementById("analyze-button");
     const signalOutput = document.getElementById("signal-output");
 
-    function generateSignal() {
-      const tf = document.getElementById("time-frame").value;
-      const coin = document.getElementById("coin-pair").value;
-      const signal = Math.random() > 0.5 ? "Buy" : "Sell";
-      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
+    function hideWelcome() {
+      document.getElementById("welcome-chart").style.display = "none";
+    }
 
-      let countdown = 20;
-      cooldownActive = true;
+    async function fetchSignal() {
+      const coin = document.getElementById("coin-pair").value.replace("/", "");
+      const interval = document.getElementById("time-frame").value;
 
-      signalOutput.style.color = color;
-      signalOutput.innerHTML = `
-        ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
-      `;
-      analyzeBtn.disabled = true;
+      const url = `https://api.twelvedata.com/time_series?symbol=${coin}&interval=${interval}&apikey=${API_KEY}&outputsize=2`;
 
-      const interval = setInterval(() => {
-        countdown--;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          signalOutput.style.color = "#ffffff";
-          signalOutput.innerHTML = `Signal: --<br>Next In: Ready`;
-          analyzeBtn.disabled = false;
-          cooldownActive = false;
-        } else {
-          signalOutput.innerHTML = `
-            ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
-          `;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data || !data.values || data.values.length < 2) {
+          signalOutput.innerHTML = "Failed to fetch data";
+          return;
         }
-      }, 1000);
+
+        const latest = parseFloat(data.values[0].close);
+        const previous = parseFloat(data.values[1].close);
+
+        const signal = latest > previous ? "Buy" : "Sell";
+        const color = signal === "Buy" ? "#00ff00" : "#ff0000";
+
+        let countdown = 20;
+        analyzeBtn.disabled = true;
+        signalOutput.style.color = color;
+        signalOutput.innerHTML = `${coin} (${interval})<br><b>${signal}</b><br>Next in: ${countdown}s`;
+
+        const intervalTimer = setInterval(() => {
+          countdown--;
+          if (countdown <= 0) {
+            clearInterval(intervalTimer);
+            signalOutput.innerHTML = "Signal: --<br>Next in: Ready";
+            analyzeBtn.disabled = false;
+          } else {
+            signalOutput.innerHTML = `${coin} (${interval})<br><b>${signal}</b><br>Next in: ${countdown}s`;
+          }
+        }, 1000);
+      } catch (error) {
+        signalOutput.innerHTML = "API Error: " + error.message;
+      }
     }
 
     analyzeBtn.addEventListener("click", () => {
-      if (!cooldownActive) generateSignal();
+      fetchSignal();
     });
   </script>
 </body>
