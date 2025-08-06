@@ -7,14 +7,15 @@
   <style>
     body {
       margin: 0;
-      background: linear-gradient(270deg, #000000, #000428, #004e92);
-      background-size: 600% 600%;
-      animation: gradientBG 12s ease infinite;
+      padding: 0;
       font-family: Arial, sans-serif;
+      background: linear-gradient(-45deg, #000428, #004e92, #000000);
+      background-size: 400% 400%;
+      animation: gradient 10s ease infinite;
       color: white;
     }
 
-    @keyframes gradientBG {
+    @keyframes gradient {
       0% { background-position: 0% 50% }
       50% { background-position: 100% 50% }
       100% { background-position: 0% 50% }
@@ -25,66 +26,67 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 28px;
+      font-size: 26px;
       font-weight: bold;
-      text-align: center;
       color: #00bfff;
       text-shadow: 0 0 10px #000, 0 0 20px #00bfff;
       z-index: 999999;
+      text-align: center;
     }
 
     #us-tech-bot {
       position: fixed;
-      bottom: 40px;
-      right: 20px;
-      width: 250px;
-      background: #000428;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280px;
+      background: rgba(0, 0, 0, 0.8);
       color: white;
       border: 2px solid #00ffff;
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 0 12px #00ffff;
-      font-size: 12px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 15px #00ffff;
+      font-size: 14px;
       z-index: 999998;
+      text-align: center;
     }
 
     #us-tech-bot h2 {
-      font-size: 14px;
-      text-align: center;
+      font-size: 16px;
       color: #00ffff;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     #us-tech-bot select, #us-tech-bot button {
       width: 100%;
-      padding: 6px;
-      margin-top: 6px;
+      padding: 8px;
+      margin-top: 8px;
       border-radius: 5px;
       border: none;
-      background-color: #ff3c3c;
-      color: white;
-      font-size: 12px;
+      background-color: #00bfff;
+      color: black;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
     }
 
     #signal-output {
-      margin-top: 10px;
-      text-align: center;
+      margin-top: 12px;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 15px;
     }
 
     #welcome-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.95);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 1000000;
+      text-align: center;
     }
 
     #welcome-modal h1 {
@@ -96,7 +98,7 @@
     #welcome-modal p {
       font-size: 14px;
       max-width: 80%;
-      text-align: center;
+      color: #ccc;
       margin-bottom: 20px;
     }
 
@@ -109,14 +111,14 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
   </style>
 </head>
 <body>
+
   <div class="title">MohsinProBot Version 2.0</div>
 
   <div id="us-tech-bot">
-    <h2>MohsinProBot Panel</h2>
+    <h2>Auto Signal Panel</h2>
     <label>Time Frame</label>
     <select id="time-frame">
       <option>5 sec</option>
@@ -125,7 +127,7 @@
       <option>1 min</option>
     </select>
 
-    <label>Coin</label>
+    <label style="margin-top: 8px;">Currency Pair</label>
     <select id="coin-pair">
       <option>EUR/USD</option>
       <option>USD/JPY</option>
@@ -137,24 +139,22 @@
     </select>
 
     <button id="analyze-button">Analyze</button>
+
     <div id="signal-output">
       Signal: --<br>Next in: --s
     </div>
   </div>
 
   <div id="welcome-modal">
-    <h1>Welcome To MohsinProBot</h1>
+    <h1>Welcome to MohsinProBot</h1>
     <p>This bot auto-analyzes and gives Buy/Sell signals using real market data from <b>market-qx.pro</b><br>Accuracy: 50~60%</p>
     <button onclick="closeModal()">OK</button>
   </div>
-
-  <audio id="ding-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-clear-announce-tones-2861.mp3" preload="auto"></audio>
 
   <script>
     const API_KEY = "d70f90f05e854c988a1943fe6b01cc07";
     const analyzeBtn = document.getElementById("analyze-button");
     const signalOutput = document.getElementById("signal-output");
-    const sound = document.getElementById("ding-sound");
 
     const symbolMap = {
       "EUR/USD": "EUR/USD",
@@ -180,13 +180,10 @@
         return;
       }
 
-      sound.currentTime = 0;
-      sound.play().catch(e => console.warn("Sound error:", e));
-
       let signal = await fetchSignal(symbol);
       let countdown = 20;
 
-      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
+      const color = signal === "Buy" ? "#00ff00" : signal === "Sell" ? "#ff0000" : "#ffffff";
       signalOutput.style.color = color;
 
       signalOutput.innerHTML = `
@@ -219,8 +216,7 @@
         }
 
         const change = parseFloat(data.close) - parseFloat(data.open);
-        return change > 0 ? "Buy" : "Sell";
-
+        return change > 0 ? "Buy" : change < 0 ? "Sell" : "Hold";
       } catch (error) {
         console.error("API error:", error);
         return "Hold";
