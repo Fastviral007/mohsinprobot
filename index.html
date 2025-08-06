@@ -2,82 +2,131 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>US-Tech Bot (Cracked by Mohsin)</title>
+  <title>MohsinProBot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    #us-tech-bot {
-      position: fixed;
+    /* Stylish animated gradient background */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0f0f0f);
+      background-size: 400% 400%;
+      animation: gradient 10s ease infinite;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .main-title {
+      position: absolute;
       top: 20px;
-      left: 20px;
-      width: 220px;
+      width: 100%;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00bfff;
+      text-shadow: 0 0 10px #00bfff;
+      z-index: 9999;
+    }
+
+    #us-tech-bot {
       background: #000428;
       color: white;
-      font-family: Arial, sans-serif;
       border: 2px solid #00ffff;
-      border-radius: 8px;
-      padding: 10px;
-      z-index: 999999;
-      box-shadow: 0 0 10px #00ffff;
-      font-size: 12px;
+      border-radius: 12px;
+      padding: 20px;
+      width: 260px;
+      box-shadow: 0 0 20px #00ffff;
+      font-size: 13px;
     }
+
     #us-tech-bot h2 {
       color: #00ffff;
-      font-size: 13px;
-      margin-bottom: 8px;
+      font-size: 16px;
+      margin-bottom: 12px;
       text-align: center;
     }
+
     #us-tech-bot label {
       display: block;
-      margin-top: 5px;
-      font-size: 11px;
+      margin-top: 10px;
+      font-size: 12px;
     }
-    #us-tech-bot select, #us-tech-bot button {
+
+    #us-tech-bot select,
+    #us-tech-bot button {
       width: 100%;
-      padding: 5px;
-      margin-top: 3px;
-      font-size: 11px;
+      padding: 6px;
+      margin-top: 6px;
+      font-size: 12px;
       border: none;
       border-radius: 4px;
       background: #ff3c3c;
       color: white;
+      transition: 0.3s;
     }
+
+    #us-tech-bot button:hover {
+      background: #ff6666;
+    }
+
     #us-tech-bot button:disabled {
       background: #666;
       cursor: not-allowed;
     }
+
     #signal-output {
-      margin-top: 10px;
-      font-size: 12px;
+      margin-top: 14px;
+      font-size: 14px;
       font-weight: bold;
       text-align: center;
     }
   </style>
 </head>
 <body>
+
+  <div class="main-title">MohsinProBot</div>
+
+  <div id="us-tech-bot">
+    <h2>MohsinProBot</h2>
+    <label>Time Frame</label>
+    <select id="time-frame">
+      <option>5 sec</option>
+      <option>15 sec</option>
+      <option>30 sec</option>
+      <option>1 min</option>
+    </select>
+    <label>Coin</label>
+    <select id="coin-pair">
+      <option>AUD/NZD</option>
+      <option>USD/PKR</option>
+      <option>USD/INR</option>
+      <option>USD/EGP (OTC)</option>
+      <option>EUR/USD</option>
+      <option>GBP/USD</option>
+      <option>USD/JPY</option>
+      <option>AUD/USD</option>
+      <option>BTC/USD</option>
+      <option>ETH/USD</option>
+    </select>
+    <button id="analyze-button">Analyze</button>
+    <div id="signal-output">
+      Signal: --<br>
+      Next In: --s
+    </div>
+  </div>
+
   <script>
     let cooldownActive = false;
-
-    const coins = [
-      "AUD/NZD", "USD/PKR", "USD/INR", "USD/EGP (OTC)", "EUR/USD",
-      "GBP/USD", "USD/JPY", "AUD/USD", "BTC/USD", "ETH/USD"
-    ];
-    const timeFrames = ["5 sec", "15 sec", "30 sec", "1 min"];
-
-    const panel = document.createElement("div");
-    panel.id = "us-tech-bot";
-    panel.innerHTML = `
-      <h2>US-Tech<br>(Cracked by Mohsin)</h2>
-      <label>Time Frame</label>
-      <select id="time-frame">${timeFrames.map(t => `<option>${t}</option>`).join('')}</select>
-      <label>Coin</label>
-      <select id="coin-pair">${coins.map(c => `<option>${c}</option>`).join('')}</select>
-      <button id="analyze-button">Analyze</button>
-      <div id="signal-output">
-        Signal: --<br>
-        Next In: --s
-      </div>
-    `;
-    document.body.appendChild(panel);
 
     const analyzeBtn = document.getElementById("analyze-button");
     const signalOutput = document.getElementById("signal-output");
@@ -92,9 +141,7 @@
       cooldownActive = true;
 
       signalOutput.style.color = color;
-      signalOutput.innerHTML = `
-        ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
-      `;
+      signalOutput.innerHTML = `${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s`;
       analyzeBtn.disabled = true;
 
       const interval = setInterval(() => {
@@ -106,9 +153,7 @@
           analyzeBtn.disabled = false;
           cooldownActive = false;
         } else {
-          signalOutput.innerHTML = `
-            ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
-          `;
+          signalOutput.innerHTML = `${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s`;
         }
       }, 1000);
     }
@@ -117,5 +162,6 @@
       if (!cooldownActive) generateSignal();
     });
   </script>
+
 </body>
 </html>
