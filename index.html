@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>US-Tech Bot (Cracked by Mohsin)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    #us-tech-bot {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 220px;
+      background: #000428;
+      color: white;
+      font-family: Arial, sans-serif;
+      border: 2px solid #00ffff;
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 999999;
+      box-shadow: 0 0 10px #00ffff;
+      font-size: 12px;
+    }
+    #us-tech-bot h2 {
+      color: #00ffff;
+      font-size: 13px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    #us-tech-bot label {
+      display: block;
+      margin-top: 5px;
+      font-size: 11px;
+    }
+    #us-tech-bot select, #us-tech-bot button {
+      width: 100%;
+      padding: 5px;
+      margin-top: 3px;
+      font-size: 11px;
+      border: none;
+      border-radius: 4px;
+      background: #ff3c3c;
+      color: white;
+    }
+    #us-tech-bot button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    #signal-output {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    let cooldownActive = false;
+
+    const coins = [
+      "AUD/NZD", "USD/PKR", "USD/INR", "USD/EGP (OTC)", "EUR/USD",
+      "GBP/USD", "USD/JPY", "AUD/USD", "BTC/USD", "ETH/USD"
+    ];
+    const timeFrames = ["5 sec", "15 sec", "30 sec", "1 min"];
+
+    const panel = document.createElement("div");
+    panel.id = "us-tech-bot";
+    panel.innerHTML = `
+      <h2>US-Tech<br>(Cracked by Mohsin)</h2>
+      <label>Time Frame</label>
+      <select id="time-frame">${timeFrames.map(t => `<option>${t}</option>`).join('')}</select>
+      <label>Coin</label>
+      <select id="coin-pair">${coins.map(c => `<option>${c}</option>`).join('')}</select>
+      <button id="analyze-button">Analyze</button>
+      <div id="signal-output">
+        Signal: --<br>
+        Next In: --s
+      </div>
+    `;
+    document.body.appendChild(panel);
+
+    const analyzeBtn = document.getElementById("analyze-button");
+    const signalOutput = document.getElementById("signal-output");
+
+    function generateSignal() {
+      const tf = document.getElementById("time-frame").value;
+      const coin = document.getElementById("coin-pair").value;
+      const signal = Math.random() > 0.5 ? "Buy" : "Sell";
+      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
+
+      let countdown = 15;
+      cooldownActive = true;
+
+      signalOutput.style.color = color;
+      signalOutput.innerHTML = `
+        ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
+      `;
+      analyzeBtn.disabled = true;
+
+      const interval = setInterval(() => {
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          signalOutput.style.color = "#ffffff";
+          signalOutput.innerHTML = `Signal: --<br>Next In: Ready`;
+          analyzeBtn.disabled = false;
+          cooldownActive = false;
+        } else {
+          signalOutput.innerHTML = `
+            ${coin} (${tf})<br><b>${signal}</b><br>Next In: ${countdown}s
+          `;
+        }
+      }, 1000);
+    }
+
+    analyzeBtn.addEventListener("click", () => {
+      if (!cooldownActive) generateSignal();
+    });
+  </script>
+</body>
+</html>
