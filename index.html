@@ -1,231 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MohsinProBot 2.0</title>
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        background: radial-gradient(ellipse at center, #000814, #000);
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        color: white;
-    }
+  :root{
+    --red:#ff2b2b;
+    --dark:#000;
+  }
+  html,body{
+    margin:0;
+    height:100%;
+    overflow:hidden;
+    background: radial-gradient(ellipse at 50% 35%, #000b1e 0%, #00040e 45%, #000 100%);
+    color:#fff;
+    font-family: Arial, Helvetica, sans-serif;
+  }
 
-    /* Jellyfish Canvas */
-    #jellyfishCanvas, #snakeCanvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-    }
+  /* LAYERS */
+  #jellyCanvas{
+    position:fixed; inset:0; z-index:0;
+  }
+  #reptileCanvas{
+    position:fixed; inset:0; z-index:1;
+    pointer-events:none;
+  }
 
-    /* Snake/reptile canvas sits above jellyfish but below panel */
-    #snakeCanvas {
-        z-index: 1;
-        opacity: 0.4;
-    }
+  /* WELCOME NOTE (glowing red) */
+  .welcome-note{
+    position:fixed; top:10px; left:50%; transform:translateX(-50%);
+    z-index:4;
+    padding:8px 16px;
+    border:1px solid var(--red);
+    border-radius:10px;
+    background:rgba(20,0,0,0.6);
+    color:var(--red);
+    font-weight:bold;
+    letter-spacing:.3px;
+    text-align:center;
+    box-shadow: 0 0 18px rgba(255,0,0,.35), inset 0 0 8px rgba(255,0,0,.25);
+    animation: welcomeGlow 2s ease-in-out infinite alternate;
+  }
+  @keyframes welcomeGlow{
+    from{ text-shadow:0 0 6px var(--red), 0 0 12px rgba(255,0,0,.6); }
+    to  { text-shadow:0 0 16px var(--red), 0 0 28px rgba(255,0,0,.85); }
+  }
 
-    /* Panel */
-    #us-tech-bot {
-        position: relative;
-        z-index: 2;
-        width: 320px;
-        margin: 50px auto;
-        padding: 20px;
-        background: rgba(20, 0, 0, 0.85);
-        border: 2px solid red;
-        border-radius: 10px;
-        box-shadow: 0 0 15px red;
-        text-align: center;
-    }
+  /* CENTER PANEL */
+  #us-tech-bot{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    z-index:3;
+    width: 320px; max-width:90vw;
+    background: rgba(20,0,0,0.88);
+    border:2px solid var(--red);
+    border-radius:14px;
+    padding:20px;
+    box-shadow: 0 0 22px rgba(255,0,0,.35), inset 0 0 12px rgba(255,0,0,.18);
+    text-align:center;
+  }
+  #us-tech-bot h2{
+    margin:0 0 12px;
+    font-size:22px;
+    color:var(--red);
+    text-shadow:0 0 6px var(--red), 0 0 12px rgba(255,0,0,.6);
+    animation:titlePulse 2.2s ease-in-out infinite alternate;
+  }
+  @keyframes titlePulse{
+    from{ text-shadow:0 0 8px var(--red), 0 0 18px rgba(255,0,0,.7); }
+    to  { text-shadow:0 0 18px var(--red), 0 0 36px rgba(255,0,0,.9); }
+  }
 
-    h2 {
-        font-size: 22px;
-        color: red;
-        text-shadow: 0 0 5px red, 0 0 10px darkred, 0 0 20px red;
-        animation: glow 2s infinite alternate;
-    }
+  label{ display:block; text-align:left; margin:10px 0 6px; font-size:13px; color:#ddd; }
 
-    @keyframes glow {
-        from { text-shadow: 0 0 5px red, 0 0 10px darkred, 0 0 20px red; }
-        to { text-shadow: 0 0 20px red, 0 0 40px darkred, 0 0 60px red; }
-    }
+  select{
+    width:100%;
+    padding:8px;
+    border-radius:6px;
+    border:1px solid var(--red);
+    background:#0d0d0d;
+    color:#fff;
+    font-weight:bold;
+    outline:none;
+    box-shadow: inset 0 0 6px rgba(255,0,0,.18);
+  }
 
-    label {
-        display: block;
-        margin-top: 10px;
-    }
+  /* Analyze button (red), disabled -> grey with countdown */
+  #analyze-button{
+    width:100%;
+    padding:10px;
+    margin-top:12px;
+    border:none;
+    border-radius:6px;
+    background:var(--red);
+    color:#fff;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+    box-shadow:0 0 12px rgba(255,0,0,.55);
+    transition: transform .15s ease, filter .2s ease;
+  }
+  #analyze-button:hover:enabled{
+    transform:translateY(-1px);
+    filter:brightness(1.1);
+  }
+  #analyze-button:disabled{
+    background:#808080;
+    color:#eee;
+    box-shadow:none;
+    cursor:not-allowed;
+  }
 
-    select {
-        width: 100%;
-        padding: 5px;
-        border-radius: 5px;
-        margin-top: 5px;
-        background: #111;
-        color: white;
-        border: 1px solid red;
-    }
+  #signal-output{
+    margin-top:14px;
+    font-weight:bold;
+    font-size:16px;
+    min-height:44px;
+  }
+  .next-timer{
+    font-size:13px; color:#ff9c9c; opacity:.9; margin-top:4px;
+  }
 
-    button {
-        margin-top: 15px;
-        padding: 10px;
-        width: 100%;
-        background: red;
-        border: none;
-        color: white;
-        font-size: 16px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px red;
-        cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
-    }
-
-    button:hover:enabled {
-        background: darkred;
-        transform: scale(1.05);
-    }
-
-    button:disabled {
-        background: grey;
-        box-shadow: none;
-        cursor: not-allowed;
-    }
-
-    #signal-output {
-        margin-top: 15px;
-        font-size: 18px;
-        font-weight: bold;
-    }
+  /* For small screens */
+  @media (max-height:560px){
+    #us-tech-bot{ transform: translate(-50%,-50%) scale(.95); }
+  }
 </style>
 </head>
 <body>
 
-<canvas id="jellyfishCanvas"></canvas>
-<canvas id="snakeCanvas"></canvas>
+<!-- BACKGROUND EFFECTS -->
+<canvas id="jellyCanvas"></canvas>
+<canvas id="reptileCanvas"></canvas>
 
+<!-- WELCOME NOTE -->
+<div class="welcome-note">Welcome to <b>MohsinProBot 2.0</b> — Auto signals with sleek visuals 🔴</div>
+
+<!-- CENTER PANEL -->
 <div id="us-tech-bot">
-    <h2>MohsinProBot Version 2.0</h2>
+  <h2>MohsinProBot Version 2.0</h2>
 
-    <label>Time Frame</label>
-    <select id="time-frame">
-        <option value="5">5 sec</option>
-        <option value="15">15 sec</option>
-        <option value="30">30 sec</option>
-        <option value="60">1 min</option>
-    </select>
+  <label for="time-frame">Time Frame</label>
+  <select id="time-frame">
+    <option value="5">5 sec</option>
+    <option value="15">15 sec</option>
+    <option value="30">30 sec</option>
+    <option value="60">1 min</option>
+  </select>
 
-    <label style="margin-top: 8px;">Currency Pair</label>
-    <select id="coin-pair">
-        <option>EUR/USD</option>
-        <option>USD/JPY</option>
-        <option>GBP/USD</option>
-        <option>USD/PKR</option>
-        <option>USD/BDT</option>
-        <option>USD/ARS</option>
-        <option>USD/BRL</option>
-    </select>
+  <label for="coin-pair" style="margin-top:8px;">Currency Pair</label>
+  <select id="coin-pair">
+    <option>EUR/USD</option>
+    <option>USD/JPY</option>
+    <option>GBP/USD</option>
+    <option>USD/PKR</option>
+    <option>USD/BDT</option>
+    <option>USD/ARS</option>
+    <option>USD/BRL</option>
+  </select>
 
-    <button id="analyze-btn">Analyze</button>
+  <button id="analyze-button">Analyze</button>
 
-    <div id="signal-output"></div>
+  <div id="signal-output">Signal: --<br><span class="next-timer">Next in: --s</span></div>
 </div>
 
 <script>
-/* ====== Jellyfish Effect ====== */
-const jellyCanvas = document.getElementById('jellyfishCanvas');
+/* ========= Resize Helpers ========= */
+function fitCanvas(c){
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+}
+window.addEventListener('resize', () => {
+  fitCanvas(jellyCanvas);
+  fitCanvas(reptileCanvas);
+});
+
+/* ========= Jellyfish Effect (back layer) ========= */
+const jellyCanvas = document.getElementById('jellyCanvas');
 const jctx = jellyCanvas.getContext('2d');
-jellyCanvas.width = window.innerWidth;
-jellyCanvas.height = window.innerHeight;
+fitCanvas(jellyCanvas);
 
-class Jellyfish {
-    constructor() {
-        this.x = Math.random() * jellyCanvas.width;
-        this.y = Math.random() * jellyCanvas.height;
-        this.radius = 20 + Math.random() * 20;
-        this.speed = 0.5 + Math.random();
-        this.color = 'rgba(255,255,255,0.2)';
-    }
-    draw() {
-        jctx.beginPath();
-        jctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        jctx.fillStyle = this.color;
-        jctx.fill();
-    }
-    update() {
-        this.y -= this.speed;
-        if (this.y < -this.radius) {
-            this.y = jellyCanvas.height + this.radius;
-            this.x = Math.random() * jellyCanvas.width;
-        }
-        this.draw();
-    }
+class Jelly {
+  constructor(){
+    this.reset(true);
+  }
+  reset(randomY=false){
+    this.x = Math.random()*jellyCanvas.width;
+    this.y = randomY ? Math.random()*jellyCanvas.height : jellyCanvas.height + Math.random()*120;
+    this.r = 16 + Math.random()*28;
+    this.speed = 0.3 + Math.random()*0.8;
+    this.col = 'rgba(0,180,255,0.18)';
+  }
+  update(){
+    this.y -= this.speed;
+    if(this.y < -this.r) this.reset(false);
+  }
+  draw(){
+    jctx.beginPath();
+    jctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    jctx.fillStyle = this.col;
+    jctx.fill();
+  }
 }
-const jellyfishArray = [];
-for (let i = 0; i < 20; i++) {
-    jellyfishArray.push(new Jellyfish());
-}
-function animateJellyfish() {
-    jctx.clearRect(0, 0, jellyCanvas.width, jellyCanvas.height);
-    jellyfishArray.forEach(j => j.update());
-    requestAnimationFrame(animateJellyfish);
-}
-animateJellyfish();
+const jellies = Array.from({length:18}, _=>new Jelly());
 
-/* ===== Snake/Reptile Effect ===== */
-const snakeCanvas = document.getElementById('snakeCanvas');
-const sctx = snakeCanvas.getContext('2d');
-snakeCanvas.width = window.innerWidth;
-snakeCanvas.height = window.innerHeight;
-
-let snakeNodes = [];
-let snakeLength = 50;
-for (let i = 0; i < snakeLength; i++) {
-    snakeNodes.push({ x: i * -10, y: snakeCanvas.height / 2 });
+function renderJelly(){
+  jctx.clearRect(0,0,jellyCanvas.width,jellyCanvas.height);
+  jellies.forEach(j=>{ j.update(); j.draw(); });
+  requestAnimationFrame(renderJelly);
 }
-let angle = 0;
-function animateSnake() {
-    sctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeNodes[0].x += 2;
-    snakeNodes[0].y = snakeCanvas.height / 2 + Math.sin(angle) * 100;
-    angle += 0.05;
-    for (let i = 1; i < snakeLength; i++) {
-        let dx = snakeNodes[i - 1].x - snakeNodes[i].x;
-        let dy = snakeNodes[i - 1].y - snakeNodes[i].y;
-        let dist = Math.sqrt(dx * dx + dy * dy);
-        let moveX = dx * 0.3;
-        let moveY = dy * 0.3;
-        snakeNodes[i].x += moveX;
-        snakeNodes[i].y += moveY;
-    }
-    sctx.strokeStyle = 'rgba(255,0,0,0.7)';
-    sctx.lineWidth = 4;
-    sctx.beginPath();
-    sctx.moveTo(snakeNodes[0].x, snakeNodes[0].y);
-    for (let i = 1; i < snakeLength; i++) {
-        sctx.lineTo(snakeNodes[i].x, snakeNodes[i].y);
-    }
-    sctx.stroke();
-    requestAnimationFrame(animateSnake);
+renderJelly();
+
+/* ========= Reptile (snake) Effect (middle layer, glowing red) ========= */
+const reptileCanvas = document.getElementById('reptileCanvas');
+const rctx = reptileCanvas.getContext('2d');
+fitCanvas(reptileCanvas);
+
+const SEGMENTS = 70;          // longer snake
+const SEG_LEN = 14;           // spacing
+const PATH_AMPL_X = 260;
+const PATH_AMPL_Y = 160;
+const nodes = [];
+let t = 0;
+
+for(let i=0;i<SEGMENTS;i++){
+  nodes.push({x: innerWidth/2 - i*SEG_LEN, y: innerHeight/2});
+}
+
+function moveHead(){
+  t += 0.02;
+  const tx = innerWidth/2 + Math.cos(t*0.9)*PATH_AMPL_X;
+  const ty = innerHeight/2 + Math.sin(t*1.4)*PATH_AMPL_Y;
+  nodes[0].x += (tx - nodes[0].x)*0.15;
+  nodes[0].y += (ty - nodes[0].y)*0.15;
+}
+
+function follow(){
+  for(let i=1;i<nodes.length;i++){
+    const px = nodes[i-1].x, py = nodes[i-1].y;
+    const cx = nodes[i].x,  cy = nodes[i].y;
+    const dx = px - cx, dy = py - cy;
+    const dist = Math.hypot(dx,dy) || 1;
+    const ux = dx/dist, uy = dy/dist;
+    nodes[i].x = px - ux*SEG_LEN;
+    nodes[i].y = py - uy*SEG_LEN;
+  }
+}
+
+function drawSnake(){
+  rctx.clearRect(0,0,reptileCanvas.width,reptileCanvas.height);
+
+  // Outer glow
+  rctx.save();
+  rctx.strokeStyle = 'rgba(255,0,0,0.35)';
+  rctx.lineWidth = 26;
+  rctx.lineJoin = 'round';
+  rctx.lineCap  = 'round';
+  rctx.shadowColor = 'rgba(255,0,0,0.9)';
+  rctx.shadowBlur  = 26;
+  rctx.beginPath();
+  rctx.moveTo(nodes[0].x, nodes[0].y);
+  for(let i=1;i<nodes.length;i++){
+    const p = nodes[i-1], c = nodes[i];
+    const mx = (p.x + c.x)/2, my = (p.y + c.y)/2;
+    rctx.quadraticCurveTo(p.x, p.y, mx, my);
+  }
+  rctx.stroke();
+  rctx.restore();
+
+  // Core bright stroke
+  rctx.save();
+  rctx.strokeStyle = 'rgba(255,0,0,0.85)';
+  rctx.lineWidth = 12;
+  rctx.lineJoin = 'round';
+  rctx.lineCap  = 'round';
+  rctx.beginPath();
+  rctx.moveTo(nodes[0].x, nodes[0].y);
+  for(let i=1;i<nodes.length;i++){
+    const p = nodes[i-1], c = nodes[i];
+    const mx = (p.x + c.x)/2, my = (p.y + c.y)/2;
+    rctx.quadraticCurveTo(p.x, p.y, mx, my);
+  }
+  rctx.stroke();
+  rctx.restore();
+}
+
+function animateSnake(){
+  moveHead();
+  follow();
+  drawSnake();
+  requestAnimationFrame(animateSnake);
 }
 animateSnake();
 
-/* ===== Button Logic ===== */
-const analyzeBtn = document.getElementById('analyze-btn');
+/* ========= Analyze Button, Signal & 20s Cooldown ========= */
+const analyzeBtn   = document.getElementById('analyze-button');
 const signalOutput = document.getElementById('signal-output');
+const timeFrameSel = document.getElementById('time-frame');
+const coinSel      = document.getElementById('coin-pair');
+
+function setSignalText(text, color){
+  signalOutput.innerHTML = `Signal: <span style="color:${color}">${text}</span><br><span class="next-timer">Next in: --s</span>`;
+}
 
 analyzeBtn.addEventListener('click', () => {
-    const signal = Math.random() > 0.5 ? "Buy" : "Sell";
-    signalOutput.textContent = `Signal: ${signal}`;
-    analyzeBtn.disabled = true;
-    setTimeout(() => {
-        analyzeBtn.disabled = false;
-    }, 20000); // 20 seconds disable
-});
-</script>
+  // show signal immediately
+  const signal = Math.random() > 0.5 ? "Buy" : "Sell";
+  const color  = signal === "Buy" ? "#00ff64" : "#ff3b3b";
+  const coin   = coinSel.value;
+  const tf     = parseInt(timeFrameSel.value, 10);
 
+  signalOutput.innerHTML =
+    `${coin} (${tf === 60 ? '1 min' : tf + ' sec'})<br>` +
+    `<b style="color:${color}">${signal}</b><br>` +
+    `<span class="next-timer">Next in: 20s</span>`;
+
+  // disable analyze button for fixed 20s
+  let remaining = 20;
+  analyzeBtn.disabled = true;
+  analyzeBtn.textContent = `Analyze (${remaining}s)`;
+
+  const timer = setInterval(() => {
+    remaining--;
+    // update countdown in button
+    analyzeBtn.textContent = `Analyze (${remaining}s)`;
+    // update "Next in" below
+    const timerSpan = signalOutput.querySelector('.next-timer');
+    if (timerSpan) timerSpan.textContent = `Next in: ${remaining}s`;
+    if (remaining <= 0){
+      clearInterval(timer);
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = 'Analyze';
+      const timerSpan2 = signalOutput.querySelector('.next-timer');
+      if (timerSpan2) timerSpan2.textContent = 'Next in: Ready';
+    }
+  }, 1000);
+});
+
+/* Initial UI text */
+setSignalText('--', '#fff');
+</script>
 </body>
 </html>
