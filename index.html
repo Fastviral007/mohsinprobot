@@ -1,255 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MohsinProBot Version 2.0</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
-      overflow: hidden;
-      color: white;
-    }
+<meta charset="UTF-8" />
+<title>MohsinProBot Version 2.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000; /* black base */
+  overflow: hidden;
+  color: white;
+}
 
-    /* Canvas jellyfish background */
-    #jellyfishCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
+/* Animated background gradient behind jellyfish */
+@keyframes gradient {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+#bg-gradient {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(-45deg, #000428, #004e92, #000000);
+  background-size: 400% 400%;
+  animation: gradient 10s ease infinite;
+  z-index: 0;
+}
 
-    .title {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 26px;
-      font-weight: bold;
-      color: #00bfff;
-      text-shadow: 0 0 10px #000, 0 0 20px #00bfff;
-      z-index: 2;
-      text-align: center;
-    }
+/* Jellyfish canvas */
+#jelly-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
 
-    #us-tech-bot {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 280px;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      border: 2px solid #00ffff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 0 15px #00ffff;
-      font-size: 14px;
-      z-index: 1;
-      text-align: center;
-    }
+/* TITLE — changed to RED */
+.title {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 26px;
+  font-weight: bold;
+  color: #ff2b2b;              
+  text-shadow: 0 0 10px rgba(255, 43, 43, 0.6);
+  z-index: 3;
+  text-align: center;
+}
 
-    #us-tech-bot h2 {
-      font-size: 16px;
-      color: #00ffff;
-      margin-bottom: 10px;
-    }
+/* FRONT PANEL — black/red style */
+#us-tech-bot {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  background: rgba(0, 0, 0, 0.85);     
+  color: white;
+  border: 2px solid #ff2b2b;           
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 15px #ff2b2b;        
+  font-size: 14px;
+  z-index: 3;
+  text-align: center;
+}
 
-    #us-tech-bot select, #us-tech-bot button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 8px;
-      border-radius: 5px;
-      border: none;
-      background-color: #00bfff;
-      color: black;
-      font-weight: bold;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+/* Heading inside panel to red */
+#us-tech-bot h2 {
+  font-size: 16px;
+  color: #ff2b2b;   
+  margin-bottom: 10px;
+}
 
-    #us-tech-bot button:disabled {
-      background-color: grey;
-      cursor: not-allowed;
-    }
+/* Controls & buttons */
+#us-tech-bot select, #us-tech-bot button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border-radius: 5px;
+  border: none;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+}
 
-    #signal-output {
-      margin-top: 12px;
-      font-weight: bold;
-      font-size: 15px;
-    }
+/* Analyze button — now RED */
+#analyze-button {
+  background-color: #ff2b2b;
+  color: white;
+}
 
-    #welcome-modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 3;
-      text-align: center;
-    }
+/* Grey cooldown */
+#analyze-button:disabled {
+  background-color: grey;
+  color: white;
+  cursor: not-allowed;
+}
 
-    #welcome-modal h1 {
-      font-size: 24px;
-      color: #00ffff;
-      margin-bottom: 15px;
-    }
+#signal-output {
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 15px;
+}
 
-    #welcome-modal p {
-      font-size: 14px;
-      max-width: 80%;
-      color: #ccc;
-      margin-bottom: 20px;
-    }
-
-    #welcome-modal button {
-      padding: 10px 20px;
-      font-size: 14px;
-      background-color: #00ffff;
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+/* Welcome modal */
+#welcome-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 4;
+  text-align: center;
+}
+#welcome-modal h1 {
+  font-size: 24px;
+  color: #00ffff;
+  margin-bottom: 15px;
+}
+#welcome-modal p {
+  font-size: 14px;
+  max-width: 80%;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+#welcome-modal button {
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: #00ffff;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
 </head>
 <body>
+<div id="bg-gradient"></div>
+<canvas id="jelly-canvas"></canvas>
 
-  <canvas id="jellyfishCanvas"></canvas>
+<div class="title">MohsinProBot Version 2.0</div>
 
-  <div class="title">MohsinProBot Version 2.0</div>
+<div id="us-tech-bot">
+  <h2>MohsinProBot Version 2.0</h2>
 
-  <div id="us-tech-bot">
-    <h2>MohsinProBot Version 2.0</h2>
+  <label>Time Frame</label>
+  <select id="time-frame">
+    <option value="5">5 sec</option>
+    <option value="15">15 sec</option>
+    <option value="30">30 sec</option>
+    <option value="60">1 min</option>
+  </select>
 
-    <label>Time Frame</label>
-    <select id="time-frame">
-      <option>5 sec</option>
-      <option>15 sec</option>
-      <option>30 sec</option>
-      <option>1 min</option>
-    </select>
+  <label style="margin-top: 8px;">Currency Pair</label>
+  <select id="coin-pair">
+    <option>EUR/USD</option>
+    <option>USD/JPY</option>
+    <option>GBP/USD</option>
+    <option>USD/PKR</option>
+    <option>USD/BDT</option>
+    <option>USD/ARS</option>
+    <option>USD/BRL</option>
+  </select>
 
-    <label style="margin-top: 8px;">Currency Pair</label>
-    <select id="coin-pair">
-      <option>EUR/USD</option>
-      <option>USD/JPY</option>
-      <option>GBP/USD</option>
-      <option>USD/PKR</option>
-      <option>USD/BDT</option>
-      <option>USD/ARS</option>
-      <option>USD/BRL</option>
-    </select>
+  <button id="analyze-button">Analyze</button>
 
-    <button id="analyze-button">Analyze</button>
-
-    <div id="signal-output">
-      Signal: --<br>Next in: --s
-    </div>
+  <div id="signal-output">
+    Signal: --<br>Next in: --s
   </div>
+</div>
 
-  <div id="welcome-modal">
-    <h1>Welcome to MohsinProBot</h1>
-    <p>This bot auto-analyzes and gives Buy/Sell signals using real market logic<br>Accuracy: 50~60%</p>
-    <button onclick="closeModal()">OK</button>
-  </div>
+<div id="welcome-modal">
+  <h1>Welcome to MohsinProBot</h1>
+  <p>This bot auto-analyzes and gives Buy/Sell signals using real market logic<br>Accuracy: 50~60%</p>
+  <button onclick="closeModal()">OK</button>
+</div>
 
-  <script>
-    /* Close modal */
-    function closeModal() {
-      document.getElementById("welcome-modal").style.display = "none";
+<script>
+// Welcome modal close
+function closeModal() {
+  document.getElementById("welcome-modal").style.display = "none";
+}
+
+// Signal analyze button logic
+const analyzeBtn = document.getElementById("analyze-button");
+const signalOutput = document.getElementById("signal-output");
+
+analyzeBtn.addEventListener("click", () => {
+  const tf = parseInt(document.getElementById("time-frame").value);
+  const coin = document.getElementById("coin-pair").value;
+  const signal = Math.random() > 0.5 ? "Buy" : "Sell";
+  const color = signal === "Buy" ? "#00ff00" : "#ff0000";
+  signalOutput.style.color = color;
+
+  let countdown = tf;
+  signalOutput.innerHTML = `${coin} (${tf} sec)<br><b>${signal}</b><br>Next in: ${countdown}s`;
+  analyzeBtn.disabled = true;
+
+  const interval = setInterval(() => {
+    countdown--;
+    if (countdown <= 0) {
+      clearInterval(interval);
+      signalOutput.innerHTML = `Signal: --<br>Next in: Ready`;
+      analyzeBtn.disabled = false;
+    } else {
+      signalOutput.innerHTML = `${coin} (${tf} sec)<br><b>${signal}</b><br>Next in: ${countdown}s`;
     }
+  }, 1000);
+});
 
-    const analyzeBtn = document.getElementById("analyze-button");
-    const signalOutput = document.getElementById("signal-output");
+// Jellyfish animation background
+const canvas = document.getElementById('jelly-canvas');
+const ctx = canvas.getContext('2d');
+let jellyfish = [];
 
-    analyzeBtn.addEventListener("click", () => {
-      const tf = document.getElementById("time-frame").value;
-      const coin = document.getElementById("coin-pair").value;
-      const signal = Math.random() > 0.5 ? "Buy" : "Sell";
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-      let countdown = 20;
-      const color = signal === "Buy" ? "#00ff00" : "#ff0000";
-      signalOutput.style.color = color;
-
-      signalOutput.innerHTML = `${coin} (${tf})<br><b>${signal}</b><br>Next in: ${countdown}s`;
-
-      analyzeBtn.disabled = true;
-
-      const interval = setInterval(() => {
-        countdown--;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          signalOutput.innerHTML = `Signal: --<br>Next in: Ready`;
-          analyzeBtn.disabled = false;
-        } else {
-          signalOutput.innerHTML = `${coin} (${tf})<br><b>${signal}</b><br>Next in: ${countdown}s`;
-        }
-      }, 1000);
-    });
-
-    /* Jellyfish effect */
-    const canvas = document.getElementById("jellyfishCanvas");
-    const ctx = canvas.getContext("2d");
-    let jellyfishArray = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+class Jellyfish {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + Math.random() * 200;
+    this.size = 20 + Math.random() * 40;
+    this.speed = 0.5 + Math.random() * 1;
+    this.color = `rgba(0,255,255,${Math.random() * 0.5 + 0.3})`;
+  }
+  update() {
+    this.y -= this.speed;
+    if (this.y < -this.size) {
+      this.y = canvas.height + Math.random() * 100;
+      this.x = Math.random() * canvas.width;
     }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
 
-    class Jellyfish {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 20 + 10;
-        this.speedY = Math.random() * 0.5 + 0.2;
-        this.color = `rgba(0, 255, 255, ${Math.random() * 0.5 + 0.2})`;
-      }
-      update() {
-        this.y -= this.speedY;
-        if (this.y < -this.size) {
-          this.y = canvas.height + this.size;
-          this.x = Math.random() * canvas.width;
-        }
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-      }
-    }
+for (let i = 0; i < 20; i++) {
+  jellyfish.push(new Jellyfish());
+}
 
-    function init() {
-      jellyfishArray = [];
-      for (let i = 0; i < 30; i++) {
-        jellyfishArray.push(new Jellyfish());
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      jellyfishArray.forEach(jelly => {
-        jelly.update();
-        jelly.draw();
-      });
-      requestAnimationFrame(animate);
-    }
-
-    init();
-    animate();
-  </script>
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  jellyfish.forEach(j => {
+    j.update();
+    j.draw();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 </body>
 </html>
