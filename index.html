@@ -1,271 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>MohsinProBot Version 2.0</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>MohsinProBot 2.0</title>
 <style>
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #000; /* black base */
-  overflow: hidden;
-  color: white;
-}
+    body {
+        margin: 0;
+        height: 100vh;
+        background: radial-gradient(ellipse at center, #000814, #000);
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
 
-/* Animated background gradient behind jellyfish */
-@keyframes gradient {
-  0% { background-position: 0% 50% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 50% }
-}
-#bg-gradient {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(-45deg, #000428, #004e92, #000000);
-  background-size: 400% 400%;
-  animation: gradient 10s ease infinite;
-  z-index: 0;
-}
+    /* Jellyfish Canvas */
+    #jellyfishCanvas, #snakeCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
 
-/* Jellyfish canvas */
-#jelly-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 1;
-}
+    /* Snake/reptile canvas sits above jellyfish but below panel */
+    #snakeCanvas {
+        z-index: 1;
+        opacity: 0.4;
+    }
 
-/* TITLE — changed to RED */
-.title {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 26px;
-  font-weight: bold;
-  color: #ff2b2b;              
-  text-shadow: 0 0 10px rgba(255, 43, 43, 0.6);
-  z-index: 3;
-  text-align: center;
-}
+    /* Panel */
+    #us-tech-bot {
+        position: relative;
+        z-index: 2;
+        width: 320px;
+        margin: 50px auto;
+        padding: 20px;
+        background: rgba(20, 0, 0, 0.85);
+        border: 2px solid red;
+        border-radius: 10px;
+        box-shadow: 0 0 15px red;
+        text-align: center;
+    }
 
-/* FRONT PANEL — black/red style */
-#us-tech-bot {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 280px;
-  background: rgba(0, 0, 0, 0.85);     
-  color: white;
-  border: 2px solid #ff2b2b;           
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 15px #ff2b2b;        
-  font-size: 14px;
-  z-index: 3;
-  text-align: center;
-}
+    h2 {
+        font-size: 22px;
+        color: red;
+        text-shadow: 0 0 5px red, 0 0 10px darkred, 0 0 20px red;
+        animation: glow 2s infinite alternate;
+    }
 
-/* Heading inside panel to red */
-#us-tech-bot h2 {
-  font-size: 16px;
-  color: #ff2b2b;   
-  margin-bottom: 10px;
-}
+    @keyframes glow {
+        from { text-shadow: 0 0 5px red, 0 0 10px darkred, 0 0 20px red; }
+        to { text-shadow: 0 0 20px red, 0 0 40px darkred, 0 0 60px red; }
+    }
 
-/* Controls & buttons */
-#us-tech-bot select, #us-tech-bot button {
-  width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-  border-radius: 5px;
-  border: none;
-  font-weight: bold;
-  font-size: 13px;
-  cursor: pointer;
-}
+    label {
+        display: block;
+        margin-top: 10px;
+    }
 
-/* Analyze button — now RED */
-#analyze-button {
-  background-color: #ff2b2b;
-  color: white;
-}
+    select {
+        width: 100%;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 5px;
+        background: #111;
+        color: white;
+        border: 1px solid red;
+    }
 
-/* Grey cooldown */
-#analyze-button:disabled {
-  background-color: grey;
-  color: white;
-  cursor: not-allowed;
-}
+    button {
+        margin-top: 15px;
+        padding: 10px;
+        width: 100%;
+        background: red;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px red;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+    }
 
-#signal-output {
-  margin-top: 12px;
-  font-weight: bold;
-  font-size: 15px;
-}
+    button:hover:enabled {
+        background: darkred;
+        transform: scale(1.05);
+    }
 
-/* Welcome modal */
-#welcome-modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 4;
-  text-align: center;
-}
-#welcome-modal h1 {
-  font-size: 24px;
-  color: #00ffff;
-  margin-bottom: 15px;
-}
-#welcome-modal p {
-  font-size: 14px;
-  max-width: 80%;
-  color: #ccc;
-  margin-bottom: 20px;
-}
-#welcome-modal button {
-  padding: 10px 20px;
-  font-size: 14px;
-  background-color: #00ffff;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    button:disabled {
+        background: grey;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    #signal-output {
+        margin-top: 15px;
+        font-size: 18px;
+        font-weight: bold;
+    }
 </style>
 </head>
 <body>
-<div id="bg-gradient"></div>
-<canvas id="jelly-canvas"></canvas>
 
-<div class="title">MohsinProBot Version 2.0</div>
+<canvas id="jellyfishCanvas"></canvas>
+<canvas id="snakeCanvas"></canvas>
 
 <div id="us-tech-bot">
-  <h2>MohsinProBot Version 2.0</h2>
+    <h2>MohsinProBot Version 2.0</h2>
 
-  <label>Time Frame</label>
-  <select id="time-frame">
-    <option value="5">5 sec</option>
-    <option value="15">15 sec</option>
-    <option value="30">30 sec</option>
-    <option value="60">1 min</option>
-  </select>
+    <label>Time Frame</label>
+    <select id="time-frame">
+        <option value="5">5 sec</option>
+        <option value="15">15 sec</option>
+        <option value="30">30 sec</option>
+        <option value="60">1 min</option>
+    </select>
 
-  <label style="margin-top: 8px;">Currency Pair</label>
-  <select id="coin-pair">
-    <option>EUR/USD</option>
-    <option>USD/JPY</option>
-    <option>GBP/USD</option>
-    <option>USD/PKR</option>
-    <option>USD/BDT</option>
-    <option>USD/ARS</option>
-    <option>USD/BRL</option>
-  </select>
+    <label style="margin-top: 8px;">Currency Pair</label>
+    <select id="coin-pair">
+        <option>EUR/USD</option>
+        <option>USD/JPY</option>
+        <option>GBP/USD</option>
+        <option>USD/PKR</option>
+        <option>USD/BDT</option>
+        <option>USD/ARS</option>
+        <option>USD/BRL</option>
+    </select>
 
-  <button id="analyze-button">Analyze</button>
+    <button id="analyze-btn">Analyze</button>
 
-  <div id="signal-output">
-    Signal: --<br>Next in: --s
-  </div>
-</div>
-
-<div id="welcome-modal">
-  <h1>Welcome to MohsinProBot</h1>
-  <p>This bot auto-analyzes and gives Buy/Sell signals using real market logic<br>Accuracy: 50~60%</p>
-  <button onclick="closeModal()">OK</button>
+    <div id="signal-output"></div>
 </div>
 
 <script>
-// Welcome modal close
-function closeModal() {
-  document.getElementById("welcome-modal").style.display = "none";
-}
-
-// Signal analyze button logic
-const analyzeBtn = document.getElementById("analyze-button");
-const signalOutput = document.getElementById("signal-output");
-
-analyzeBtn.addEventListener("click", () => {
-  const tf = parseInt(document.getElementById("time-frame").value);
-  const coin = document.getElementById("coin-pair").value;
-  const signal = Math.random() > 0.5 ? "Buy" : "Sell";
-  const color = signal === "Buy" ? "#00ff00" : "#ff0000";
-  signalOutput.style.color = color;
-
-  let countdown = tf;
-  signalOutput.innerHTML = `${coin} (${tf} sec)<br><b>${signal}</b><br>Next in: ${countdown}s`;
-  analyzeBtn.disabled = true;
-
-  const interval = setInterval(() => {
-    countdown--;
-    if (countdown <= 0) {
-      clearInterval(interval);
-      signalOutput.innerHTML = `Signal: --<br>Next in: Ready`;
-      analyzeBtn.disabled = false;
-    } else {
-      signalOutput.innerHTML = `${coin} (${tf} sec)<br><b>${signal}</b><br>Next in: ${countdown}s`;
-    }
-  }, 1000);
-});
-
-// Jellyfish animation background
-const canvas = document.getElementById('jelly-canvas');
-const ctx = canvas.getContext('2d');
-let jellyfish = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+/* ====== Jellyfish Effect ====== */
+const jellyCanvas = document.getElementById('jellyfishCanvas');
+const jctx = jellyCanvas.getContext('2d');
+jellyCanvas.width = window.innerWidth;
+jellyCanvas.height = window.innerHeight;
 
 class Jellyfish {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + Math.random() * 200;
-    this.size = 20 + Math.random() * 40;
-    this.speed = 0.5 + Math.random() * 1;
-    this.color = `rgba(0,255,255,${Math.random() * 0.5 + 0.3})`;
-  }
-  update() {
-    this.y -= this.speed;
-    if (this.y < -this.size) {
-      this.y = canvas.height + Math.random() * 100;
-      this.x = Math.random() * canvas.width;
+    constructor() {
+        this.x = Math.random() * jellyCanvas.width;
+        this.y = Math.random() * jellyCanvas.height;
+        this.radius = 20 + Math.random() * 20;
+        this.speed = 0.5 + Math.random();
+        this.color = 'rgba(255,255,255,0.2)';
     }
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
-  }
+    draw() {
+        jctx.beginPath();
+        jctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        jctx.fillStyle = this.color;
+        jctx.fill();
+    }
+    update() {
+        this.y -= this.speed;
+        if (this.y < -this.radius) {
+            this.y = jellyCanvas.height + this.radius;
+            this.x = Math.random() * jellyCanvas.width;
+        }
+        this.draw();
+    }
 }
-
+const jellyfishArray = [];
 for (let i = 0; i < 20; i++) {
-  jellyfish.push(new Jellyfish());
+    jellyfishArray.push(new Jellyfish());
 }
+function animateJellyfish() {
+    jctx.clearRect(0, 0, jellyCanvas.width, jellyCanvas.height);
+    jellyfishArray.forEach(j => j.update());
+    requestAnimationFrame(animateJellyfish);
+}
+animateJellyfish();
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  jellyfish.forEach(j => {
-    j.update();
-    j.draw();
-  });
-  requestAnimationFrame(animate);
+/* ===== Snake/Reptile Effect ===== */
+const snakeCanvas = document.getElementById('snakeCanvas');
+const sctx = snakeCanvas.getContext('2d');
+snakeCanvas.width = window.innerWidth;
+snakeCanvas.height = window.innerHeight;
+
+let snakeNodes = [];
+let snakeLength = 50;
+for (let i = 0; i < snakeLength; i++) {
+    snakeNodes.push({ x: i * -10, y: snakeCanvas.height / 2 });
 }
-animate();
+let angle = 0;
+function animateSnake() {
+    sctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+    snakeNodes[0].x += 2;
+    snakeNodes[0].y = snakeCanvas.height / 2 + Math.sin(angle) * 100;
+    angle += 0.05;
+    for (let i = 1; i < snakeLength; i++) {
+        let dx = snakeNodes[i - 1].x - snakeNodes[i].x;
+        let dy = snakeNodes[i - 1].y - snakeNodes[i].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        let moveX = dx * 0.3;
+        let moveY = dy * 0.3;
+        snakeNodes[i].x += moveX;
+        snakeNodes[i].y += moveY;
+    }
+    sctx.strokeStyle = 'rgba(255,0,0,0.7)';
+    sctx.lineWidth = 4;
+    sctx.beginPath();
+    sctx.moveTo(snakeNodes[0].x, snakeNodes[0].y);
+    for (let i = 1; i < snakeLength; i++) {
+        sctx.lineTo(snakeNodes[i].x, snakeNodes[i].y);
+    }
+    sctx.stroke();
+    requestAnimationFrame(animateSnake);
+}
+animateSnake();
+
+/* ===== Button Logic ===== */
+const analyzeBtn = document.getElementById('analyze-btn');
+const signalOutput = document.getElementById('signal-output');
+
+analyzeBtn.addEventListener('click', () => {
+    const signal = Math.random() > 0.5 ? "Buy" : "Sell";
+    signalOutput.textContent = `Signal: ${signal}`;
+    analyzeBtn.disabled = true;
+    setTimeout(() => {
+        analyzeBtn.disabled = false;
+    }, 20000); // 20 seconds disable
+});
 </script>
+
 </body>
 </html>
