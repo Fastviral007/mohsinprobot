@@ -1,193 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MohsinProBot 2.0</title>
-<style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        background: radial-gradient(circle at center, #001d3d, #000814 80%);
-    }
-    canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 0;
-    }
-    header {
-        position: fixed;
-        top: 10px;
-        width: 100%;
-        text-align: center;
-        font-size: 2rem;
-        font-weight: bold;
-        color: black;
-        text-shadow: 0 0 5px #fff, 0 0 10px #444, 0 0 20px #000;
-        animation: glow 2s infinite alternate;
-        z-index: 2;
-    }
-    @keyframes glow {
-        from { text-shadow: 0 0 5px #fff, 0 0 10px #444, 0 0 20px #000; }
-        to { text-shadow: 0 0 10px #aaa, 0 0 20px #555, 0 0 30px #000; }
-    }
-    main {
-        position: relative;
-        z-index: 1;
-        padding-top: 80px;
-        text-align: center;
-        color: white;
-    }
-    button {
-        padding: 10px 20px;
-        margin: 5px;
-        font-size: 1rem;
-        cursor: pointer;
-        border: none;
-        border-radius: 5px;
-        background: #00aaff;
-        color: white;
-        transition: background 0.3s;
-    }
-    button:disabled {
-        background: grey;
-        cursor: not-allowed;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MohsinProBot 2.0</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #000814, #000);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Title Style */
+        .title {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: black;
+            text-shadow: 0 0 5px #fff, 0 0 10px #555, 0 0 20px #000;
+            animation: glowPulse 2s infinite alternate;
+            z-index: 10;
+        }
+
+        @keyframes glowPulse {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #555, 0 0 20px #000;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #999, 0 0 30px #000;
+            }
+        }
+
+        /* Welcome Box */
+        .welcome {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 1.2rem;
+            color: #ddd;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .signal-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .signal-btn:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+
+        /* Chart placeholder */
+        #chart {
+            width: 80%;
+            height: 300px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-<canvas id="jellyfish-canvas"></canvas>
+    <canvas id="jellyfish-canvas"></canvas>
 
-<header>MOHSINPROBOT 2.0</header>
+    <div class="title">MohsinProBot 2.0</div>
 
-<main>
-    <h2>Welcome to MohsinProBot!</h2>
-    <p>Choose your signal timing:</p>
-    <button onclick="triggerSignal(5)">5s</button>
-    <button onclick="triggerSignal(15)">15s</button>
-    <button onclick="triggerSignal(30)">30s</button>
-    <button onclick="triggerSignal(60)">1 min</button>
-    <div id="chart" style="margin-top:20px;">
-        <p>[ Chart Placeholder ]</p>
+    <div class="welcome">Welcome to MohsinProBot! Enjoy the effects and features.</div>
+
+    <div class="buttons">
+        <button class="signal-btn" onclick="sendSignal(5)">5 Sec</button>
+        <button class="signal-btn" onclick="sendSignal(15)">15 Sec</button>
+        <button class="signal-btn" onclick="sendSignal(30)">30 Sec</button>
+        <button class="signal-btn" onclick="sendSignal(60)">1 Min</button>
     </div>
-</main>
 
-<script>
-/* === JELLYFISH BACKGROUND === */
-const canvas = document.getElementById('jellyfish-canvas');
-const ctx = canvas.getContext('2d');
-let w = canvas.width = window.innerWidth;
-let h = canvas.height = window.innerHeight;
+    <div id="chart">[ Chart Placeholder ]</div>
 
-window.addEventListener('resize', () => {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-});
+    <script>
+        // Button disable logic
+        function sendSignal(seconds) {
+            const buttons = document.querySelectorAll('.signal-btn');
+            buttons.forEach(btn => btn.disabled = true);
 
-class Vector {
-    constructor(x, y) {
-        this.x = x || 0;
-        this.y = y || 0;
-    }
-}
-
-class Jellyfish {
-    constructor(x, y) {
-        this.pos = new Vector(x, y);
-        this.vel = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
-        this.acc = new Vector();
-        this.size = Math.random() * 2 + 1;
-        this.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
-        this.particles = [];
-        for (let i = 0; i < 50; i++) {
-            this.particles.push({
-                pos: new Vector(this.pos.x, this.pos.y),
-                prevPos: new Vector(this.pos.x, this.pos.y)
-            });
+            setTimeout(() => {
+                buttons.forEach(btn => btn.disabled = false);
+            }, seconds * 1000);
         }
-    }
-    update() {
-        this.vel.x += this.acc.x;
-        this.vel.y += this.acc.y;
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
-        this.acc = new Vector();
 
-        if (this.pos.x > w) this.pos.x = 0;
-        if (this.pos.x < 0) this.pos.x = w;
-        if (this.pos.y > h) this.pos.y = 0;
-        if (this.pos.y < 0) this.pos.y = h;
+        // Jellyfish animation
+        const canvas = document.getElementById('jellyfish-canvas');
+        const ctx = canvas.getContext('2d');
+        let w = (canvas.width = window.innerWidth);
+        let h = (canvas.height = window.innerHeight);
 
-        this.particles.forEach((p, i) => {
-            const tempX = p.pos.x;
-            const tempY = p.pos.y;
-            if (i === 0) {
-                p.pos.x = this.pos.x;
-                p.pos.y = this.pos.y;
-            } else {
-                const prev = this.particles[i - 1];
-                const dx = prev.pos.x - p.pos.x;
-                const dy = prev.pos.y - p.pos.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const angle = Math.atan2(dy, dx);
-                p.pos.x = prev.pos.x - Math.cos(angle) * (this.size * 5);
-                p.pos.y = prev.pos.y - Math.sin(angle) * (this.size * 5);
+        window.addEventListener('resize', () => {
+            w = (canvas.width = window.innerWidth);
+            h = (canvas.height = window.innerHeight);
+        });
+
+        class Vector {
+            constructor(x, y) {
+                this.x = x || 0;
+                this.y = y || 0;
             }
-            p.prevPos.x = tempX;
-            p.prevPos.y = tempY;
-        });
-    }
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.pos.x, this.pos.y, this.size * 10, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
+        }
 
-        ctx.beginPath();
-        ctx.moveTo(this.pos.x, this.pos.y);
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = 1;
-        this.particles.forEach((p, i) => {
-            if (i > 0) ctx.lineTo(p.pos.x, p.pos.y);
-        });
-        ctx.stroke();
-        ctx.closePath();
-    }
-}
+        class Jellyfish {
+            constructor(x, y) {
+                this.pos = new Vector(x, y);
+                this.vel = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
+                this.acc = new Vector();
+                this.size = Math.random() * 2 + 1;
+                this.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+                this.particles = [];
 
-const jellyfish = [];
-for (let i = 0; i < 15; i++) {
-    jellyfish.push(new Jellyfish(Math.random() * w, Math.random() * h));
-}
+                for (let i = 0; i < 50; i++) {
+                    this.particles.push({
+                        pos: new Vector(this.pos.x, this.pos.y),
+                        prevPos: new Vector(this.pos.x, this.pos.y)
+                    });
+                }
+            }
 
-function animate() {
-    const gradient = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h));
-    gradient.addColorStop(0, 'rgba(0, 13, 61, 0.4)');
-    gradient.addColorStop(1, 'rgba(0, 0, 0, 0.9)');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, w, h);
+            update() {
+                this.vel.x += this.acc.x;
+                this.vel.y += this.acc.y;
+                this.pos.x += this.vel.x;
+                this.pos.y += this.vel.y;
+                this.acc = new Vector();
 
-    jellyfish.forEach(j => {
-        j.update();
-        j.draw();
-    });
+                if (this.pos.x > w) this.pos.x = 0;
+                if (this.pos.x < 0) this.pos.x = w;
+                if (this.pos.y > h) this.pos.y = 0;
+                if (this.pos.y < 0) this.pos.y = h;
 
-    requestAnimationFrame(animate);
-}
-animate();
+                this.particles.forEach((p, i) => {
+                    const tempX = p.pos.x;
+                    const tempY = p.pos.y;
+                    
+                    if (i === 0) {
+                        p.pos.x = this.pos.x;
+                        p.pos.y = this.pos.y;
+                    } else {
+                        const prev = this.particles[i - 1];
+                        const dx = prev.pos.x - p.pos.x;
+                        const dy = prev.pos.y - p.pos.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx);
+                        const newX = prev.pos.x - Math.cos(angle) * (this.size * 5);
+                        const newY = prev.pos.y - Math.sin(angle) * (this.size * 5);
+                        p.pos.x = newX;
+                        p.pos.y = newY;
+                    }
 
-/* === BUTTON COOLDOWN LOGIC === */
-function triggerSignal(seconds) {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(btn => btn.disabled = true);
-    setTimeout(() => {
-        buttons.forEach(btn => btn.disabled = false);
-    }, seconds * 1000);
-    console.log(`Signal triggered for ${seconds} seconds`);
-}
-</script>
+                    p.prevPos.x = tempX;
+                    p.prevPos.y = tempY;
+                });
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.pos.x, this.pos.y, this.size * 10, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+                
+                ctx.beginPath();
+                ctx.moveTo(this.pos.x, this.pos.y);
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 1;
+                
+                this.particles.forEach((p, i) => {
+                    if (i > 0) {
+                        ctx.lineTo(p.pos.x, p.pos.y);
+                    }
+                });
+                
+                ctx.stroke();
+                ctx.closePath();
+            }
+        }
+
+        const jellyfish = [];
+        for (let i = 0; i < 15; i++) {
+            jellyfish.push(new Jellyfish(Math.random() * w, Math.random() * h));
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 8, 20, 0.1)'; 
+            ctx.fillRect(0, 0, w, h);
+
+            jellyfish.forEach(j => {
+                j.update();
+                j.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
 </body>
 </html>
